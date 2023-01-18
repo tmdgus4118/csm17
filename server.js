@@ -13,7 +13,6 @@ const server = async () => {
     const app = createApp();
     console.log("MongoDb Connected!!");
     app.use(express.json());
-
     app.listen(PORT, () => {
       console.log(`Server Listening on port ${PORT}`);
     });
