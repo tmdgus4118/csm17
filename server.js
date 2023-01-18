@@ -4,8 +4,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const PORT = process.env.PORT;
 
-const mongoUrl =
-  "mongodb+srv://root:dnjstmdgus12@mongodbtutorial.qht8epf.mongodb.net/BlogService?retryWrites=true&w=majority";
+const mongoUrl = process.env.DBURL;
 
 const server = async () => {
   try {
