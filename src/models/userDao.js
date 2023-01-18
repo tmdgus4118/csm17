@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { useContainer } = require("typeorm");
 
 const AdminSchema = new mongoose.Schema({
   adminId: { type: String, require: true, unique: true },
@@ -15,4 +16,19 @@ const getAdminById = async (adminId) => {
   }
 };
 
-module.exports = { Admin, getAdminById };
+const createAdmin = async (adminId, password) => {
+  try {
+    const admins = await Admin.create({
+      adminId: adminId,
+      password: password,
+    });
+    console.log("Success to Create Admin!!");
+    return admins;
+  } catch (err) {
+    console.log(err);
+  }
+
+  return createAdmin;
+};
+
+module.exports = { Admin, getAdminById, createAdmin };
