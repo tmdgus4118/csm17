@@ -27,8 +27,6 @@ const createAdmin = async (adminId, password) => {
   } catch (err) {
     console.log(err);
   }
-
-  return createAdmin;
 };
 
 module.exports = { Admin, getAdminById, createAdmin };

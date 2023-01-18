@@ -27,6 +27,7 @@ const adminSignUp = async (req, res) => {
       throw new Error("You have to Enter all adminId , password , admincode!!");
     }
     await authService.adminSignUp(adminId, password);
+    return res.status(201).json({ message: "Complete" });
   } catch (err) {
     res.status(err.statusCode || 400).json({ message: err.message });
   }

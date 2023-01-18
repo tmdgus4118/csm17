@@ -31,7 +31,7 @@ const adminSignUp = async (adminId, password) => {
     err.statusCode = 400;
     throw err;
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 12);
   await userDao.createAdmin(adminId, hashedPassword);
 };
 
