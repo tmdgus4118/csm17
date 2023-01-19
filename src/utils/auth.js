@@ -16,7 +16,7 @@ const adminTokenRequired = async (req, res, next) => {
     error.statusCode = 404;
     return next(error);
   }
-  req.user = user;
+  req.admin = admin;
   next();
 };
 

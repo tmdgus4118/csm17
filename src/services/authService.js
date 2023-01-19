@@ -35,4 +35,25 @@ const adminSignUp = async (adminId, password) => {
   await userDao.createAdmin(adminId, hashedPassword);
 };
 
-module.exports = { adminSignIn, adminSignUp };
+const getAllUser = async () => {
+  const usersList = await userDao.getAllUser();
+  return usersList;
+};
+
+const getDashboard = async () => {
+  const dataList = await userDao.getDashboard();
+  return dataList;
+};
+
+const adminPosting = async (title, content, adminId) => {
+  const adminpost = await userDao.adminPosting(title, content, adminId);
+  return adminpost;
+};
+
+module.exports = {
+  adminSignIn,
+  adminSignUp,
+  getAllUser,
+  getDashboard,
+  adminPosting,
+};

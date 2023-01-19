@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+// require("mongoose-moment")(mongoose);
+moment = require("moment");
 const { useContainer } = require("typeorm");
+const { AdminSchema, UserSchema, PostsSchema } = require("../utils/schema");
 
-const AdminSchema = new mongoose.Schema({
-  adminId: { type: String, require: true, unique: true },
-  password: { type: String, require: true },
-});
-const Admin = mongoose.model("Admin", AdminSchema);
+const User = new mongoose.model("Users", UserSchema);
+const Admin = new mongoose.model("Admin", AdminSchema);
+const Post = new mongoose.model("Post", PostsSchema);
 
 const getAdminById = async (adminId) => {
   try {
@@ -29,4 +30,83 @@ const createAdmin = async (adminId, password) => {
   }
 };
 
-module.exports = { Admin, getAdminById, createAdmin };
+const getAllUser = async () => {
+  try {
+    const AllUsers = await User.find({});
+    return AllUsers;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getDashboard = async () => {
+  try {
+    console.log(
+      "___________________________START______________________________________"
+    );
+    const allAdmin = await Admin.count({
+      register_time: { $lt: moment().format("YYYYMMDDhhmmss") },
+    });
+    const yesterdayAdmin = await Admin.count({
+      register_time: { $lt: moment().format("YYYYMMDDhhmmss") - 1000000 },
+    });
+
+    if (allAdmin > yesterdayAdmin) {
+      const increaseAdmin = allAdmin - yesterdayAdmin;
+      console.log("어제보다 증가한 관리자수:", increaseAdmin);
+    } else if (allAdmin < yesterdayAdmin) {
+      const decreaseAdmin = yesterdayAdmin - allAdmin;
+      console.log("어제보다 감소한 관리자수:", decreaseAdmin);
+    } else {
+      console.log("변화없음");
+    }
+    console.log(" 현재 총 관리자 숫자", allAdmin);
+    console.log(
+      "_____________________________AND_____________________________________"
+    );
+    const allPosts = await Post.count({
+      resister_time: { $lt: moment().format("YYYYMMDDhhmmss") },
+    });
+    const yesterdayPosts = await Post.count({
+      resister_time: { $lt: moment().format("YYYYMMDDhhmmss") - 1000000 },
+    });
+    if (allPosts > yesterdayPosts) {
+      const increasePost = allPosts - yesterdayPosts;
+      console.log("어제보다 증가한 게시물 수 :", increasePost);
+    } else {
+      console.log("변화 없음");
+    }
+    console.log("현재 총 게시물 갯수:", allPosts);
+
+    return { allAdmin, allPosts };
+
+    //위에 로직은 유저의 변화를 나타내기 위한 로직이다. 하지만 DB에 유저 목록이 없어서 임시로 유저대신 관리자 목록으로 테스트함 정상적으로 출력됨. 추후 유저로 변경하면된다.
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const adminPosting = async (title, content, adminId) => {
+  try {
+    const posts = await Post.create({
+      title: title,
+      content: content,
+      adminId: adminId,
+    });
+    console.log("Success to Posting!!");
+    const allposts = await Post.count({});
+    console.log(allposts);
+    return posts;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = {
+  Admin,
+  getAdminById,
+  createAdmin,
+  getAllUser,
+  getDashboard,
+  adminPosting,
+};
