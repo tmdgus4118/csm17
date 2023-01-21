@@ -1,12 +1,19 @@
 const mongoose = require("mongoose");
 // require("mongoose-moment")(mongoose);
 moment = require("moment");
+
 const { useContainer } = require("typeorm");
-const { AdminSchema, UserSchema, PostsSchema } = require("../utils/schema");
+const {
+  AdminSchema,
+  UserSchema,
+  PostsSchema,
+  PdfSchema,
+} = require("../utils/schema");
 
 const User = new mongoose.model("Users", UserSchema);
 const Admin = new mongoose.model("Admin", AdminSchema);
 const Post = new mongoose.model("Post", PostsSchema);
+const Pdfs = new mongoose.model("pdf", PdfSchema);
 
 const getAdminById = async (adminId) => {
   try {
@@ -42,7 +49,7 @@ const getAllUser = async () => {
 const getDashboard = async () => {
   try {
     console.log(
-      "___________________________START______________________________________"
+      "_____________________________START___________________________________"
     );
     const allAdmin = await Admin.count({
       register_time: { $lt: moment().format("YYYYMMDDhhmmss") },
@@ -65,10 +72,10 @@ const getDashboard = async () => {
       "_____________________________AND_____________________________________"
     );
     const allPosts = await Post.count({
-      resister_time: { $lt: moment().format("YYYYMMDDhhmmss") },
+      register_time: { $lt: moment().format("YYYYMMDDhhmmss") },
     });
     const yesterdayPosts = await Post.count({
-      resister_time: { $lt: moment().format("YYYYMMDDhhmmss") - 1000000 },
+      register_time: { $lt: moment().format("YYYYMMDDhhmmss") - 1000000 },
     });
     if (allPosts > yesterdayPosts) {
       const increasePost = allPosts - yesterdayPosts;
@@ -77,8 +84,24 @@ const getDashboard = async () => {
       console.log("변화 없음");
     }
     console.log("현재 총 게시물 갯수:", allPosts);
+    console.log(
+      "_____________________________AND_____________________________________"
+    );
 
-    return { allAdmin, allPosts };
+    const viewPosts = await Post.find({}).sort({ view: -1 }).limit(5);
+    console.log("조회수 상위 5개 게시물:", viewPosts);
+
+    console.log(
+      "_____________________________AND_____________________________________"
+    );
+
+    const viewFiles = await Pdfs.find({}).sort({ _id: 1 }).limit(5);
+    console.log("학교 정보:", viewFiles);
+    console.log(
+      "_____________________________END_____________________________________"
+    );
+
+    return { allPosts, allAdmin, viewPosts, viewFiles };
 
     //위에 로직은 유저의 변화를 나타내기 위한 로직이다. 하지만 DB에 유저 목록이 없어서 임시로 유저대신 관리자 목록으로 테스트함 정상적으로 출력됨. 추후 유저로 변경하면된다.
   } catch (err) {
@@ -88,10 +111,12 @@ const getDashboard = async () => {
 
 const adminPosting = async (title, content, adminId) => {
   try {
+    const RandomViewNumber = Math.floor(Math.random() * 1000 + 1);
     const posts = await Post.create({
       title: title,
       content: content,
       adminId: adminId,
+      view: RandomViewNumber,
     });
     console.log("Success to Posting!!");
     const allposts = await Post.count({});

@@ -38,6 +38,17 @@ const PostsSchema = new mongoose.Schema({
     type: String,
     default: moment().format("YYYYMMDDhhmmss"),
   },
+  view: {
+    type: Number,
+    require: true,
+  },
 });
 
-module.exports = { AdminSchema, UserSchema, PostsSchema };
+const PdfSchema = new mongoose.Schema({
+  filename: { type: String, require: true },
+  school: { type: String, require: true },
+  fileurl: { type: String, require: true },
+  userId: { type: Number, require: true },
+});
+
+module.exports = { AdminSchema, UserSchema, PostsSchema, PdfSchema };
