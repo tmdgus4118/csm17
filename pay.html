@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- jQuery -->
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
+    <!-- iamport.payment.js -->
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
+  </head>
+  <body>
+    <button onclick="requestPay()">결제하기</button>
+
+    <script>
+      function requestPay() {
+        var IMP = window.IMP;
+        IMP.init("imp32512040");
+
+        const make_merchant_uid = () => {
+          const current_time = new Date();
+          const year = current_time.getFullYear().toString();
+          const month = (current_time.getMonth() + 1).toString();
+          const day = current_time.getDate().toString();
+          const hour = current_time.getHours().toString();
+          const minute = current_time.getMinutes().toString();
+          const second = current_time.getSeconds().toString();
+          const merchant_uid =
+            "MIHEE" + year + month + day + hour + minute + second;
+          return merchant_uid;
+        };
+        const merchant_uid = make_merchant_uid();
+
+        IMP.request_pay(
+          {
+            // param
+            pg: "html5_inicis",
+            pay_method: "card",
+            merchant_uid: make_merchant_uid(),
+            name: "CSM17",
+            amount: 100,
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-4242-4242",
+            buyer_addr: "서울특별시 강남구 신사동",
+            buyer_postcode: "01181",
+          },
+          function (rsp) {
+            // callback
+            if (rsp.success) {
+              jQuery.ajax({
+                url: "http://127.0.0.1:3000/auth/admin/payments", // 예: https://www.myservice.com/payments/complete
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                data: {
+                  imp_uid: rsp.imp_uid,
+                  merchant_uid: rsp.merchant_uid,
+                },
+              });
+              done(function (data) {
+                // 응답 처리
+                switch (data.status) {
+                  case "vbankIssued":
+                    console.log("Success to get account");
+                    break;
+                  case "success":
+                    console.log("Success to Pay");
+                    break;
+                }
+              });
+            } else {
+              alert("결제에 실패하였습니다. 에러 내용: " + rsp.error_msg);
+            }
+          }
+        );
+      }
+    </script>
+  </body>
+</html>

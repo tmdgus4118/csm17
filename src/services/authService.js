@@ -50,10 +50,16 @@ const adminPosting = async (title, content, adminId) => {
   return adminpost;
 };
 
+const postPayments = async (imp_uid, merchant_uid) => {
+  const adminpayments = await userDao.postPayments(imp_uid, merchant_uid);
+  return adminpayments;
+};
+
 module.exports = {
   adminSignIn,
   adminSignUp,
   getAllUser,
   getDashboard,
   adminPosting,
+  postPayments,
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 
 const adminController = require("../controllers/authController");
+
 const { adminTokenRequired } = require("../utils/auth");
 const authrouter = express.Router();
 
@@ -17,5 +18,8 @@ authrouter.post(
   adminTokenRequired,
   adminController.adminPosting
 ); //게시물 등록
+
+authrouter.post("/admin/payments", adminController.postPayments);
+//아임포트 결제 모듈 테스트
 
 module.exports = authrouter;

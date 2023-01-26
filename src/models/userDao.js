@@ -8,12 +8,16 @@ const {
   UserSchema,
   PostsSchema,
   PdfSchema,
+  DataRoomSchema,
+  PaymentsSchema,
 } = require("../utils/schema");
 
 const User = new mongoose.model("Users", UserSchema);
 const Admin = new mongoose.model("Admin", AdminSchema);
 const Post = new mongoose.model("Post", PostsSchema);
 const Pdfs = new mongoose.model("pdf", PdfSchema);
+const DataRoom = new mongoose.model("DataRoom", DataRoomSchema);
+const Payments = new mongoose.model("Payments", PaymentsSchema);
 
 const getAdminById = async (adminId) => {
   try {
@@ -98,10 +102,17 @@ const getDashboard = async () => {
     const viewFiles = await Pdfs.find({}).sort({ _id: 1 }).limit(5);
     console.log("학교 정보:", viewFiles);
     console.log(
+      "_____________________________AND_____________________________________"
+    );
+
+    const viewDatas = await DataRoom.find({}).sort({ _id: 1 }).limit(8);
+    console.log("자료실:", viewDatas);
+
+    console.log(
       "_____________________________END_____________________________________"
     );
 
-    return { allPosts, allAdmin, viewPosts, viewFiles };
+    return { allPosts, allAdmin, viewPosts, viewFiles, viewDatas };
 
     //위에 로직은 유저의 변화를 나타내기 위한 로직이다. 하지만 DB에 유저 목록이 없어서 임시로 유저대신 관리자 목록으로 테스트함 정상적으로 출력됨. 추후 유저로 변경하면된다.
   } catch (err) {
@@ -127,6 +138,21 @@ const adminPosting = async (title, content, adminId) => {
   }
 };
 
+const postPayments = async (imp_uid, merchant_uid) => {
+  try {
+    const payments = await Payments.create({
+      imp_uid: imp_uid,
+      merchant_uid: merchant_uid,
+    });
+    console.log("Success to create Payments!!");
+    const allPayments = await Payments.find({});
+    console.log(allPayments);
+    return payments;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   Admin,
   getAdminById,
@@ -134,4 +160,6 @@ module.exports = {
   getAllUser,
   getDashboard,
   adminPosting,
+  postPayments,
+  Payments,
 };
