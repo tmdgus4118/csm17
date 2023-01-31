@@ -109,7 +109,7 @@ const getDashboard = async () => {
     console.log("자료실:", viewDatas);
 
     console.log(
-      "_____________________________END_____________________________________"
+      "______________________________END_____________________________________"
     );
 
     return { allPosts, allAdmin, viewPosts, viewFiles, viewDatas };
