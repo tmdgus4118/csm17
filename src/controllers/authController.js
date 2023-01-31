@@ -4,6 +4,7 @@ const authService = require("../services/authService");
 const Payments = require("../models/userDao.js");
 const Imp_key = process.env.Imp_key;
 const Imp_secret = process.env.Imp_secret;
+const axios = require("axios");
 
 //관리자 로그인 기능//
 const adminSignIn = async (req, res) => {
@@ -72,7 +73,7 @@ const adminPosting = async (req, res) => {
 const postPayments = async (req, res) => {
   try {
     const { imp_uid, merchant_uid } = req.body;
-
+    console.log(imp_uid, merchant_uid);
     const getToken = await axios({
       url: "https://api.iamport.kr/users/getToken",
       method: "post", // POST method
@@ -83,12 +84,13 @@ const postPayments = async (req, res) => {
       },
     });
     const { access_token } = getToken.data.response; // 인증 토큰
-    console.log(access_token, "------------------------"); //콘솔 안찍힘
+    console.log(access_token, "------------------------"); //콘솔 잘찍힘
     const getPaymentData = await axios({
       url: `https://api.iamport.kr/payments/${imp_uid}`, // imp_uid 전달
       method: "get", // GET method
-      headers: { Authorization: access_token }, // 인증 토큰 Authorization header에 추가
+      headers: { Authorization: access_token }, // 인증 토큰 Authorization header에 추가 Bearer access_token
     });
+    console.log(getPaymentData, "-------");
     const paymentData = getPaymentData.data.response; // 조회한 결제 정보
 
     const findById = await Payments.find;
@@ -100,7 +102,7 @@ const postPayments = async (req, res) => {
 
     if (amount === amountToBePaid) {
       // 결제금액 일치. 결제 된 금액 === 결제 되어야 하는 금액
-      await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // DB에 결제 정보 저장
+      await findByIdAndUpdate(merchant_uid, { $set: paymentData }); // DB에 결제 정보 저장
 
       switch (status) {
         case "ready": // 가상계좌 발급
@@ -134,6 +136,27 @@ const postPayments = async (req, res) => {
   }
 };
 
+const getUserInforByNickName = async (req, res) => {
+  try {
+    const { userNickName } = req.query;
+    const result = await authService.getUserInforByNickName(userNickName);
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.ststua(err.statusCode || 400).json({ message: err.message });
+  }
+};
+
+const deleteByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const result = await authService.deleteByUserId(userId);
+    return res.status(200).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 400).json({ message: err.message });
+  }
+};
+
 module.exports = {
   adminSignIn,
   adminSignUp,
@@ -141,4 +164,6 @@ module.exports = {
   getDashboard,
   adminPosting,
   postPayments,
+  getUserInforByNickName,
+  deleteByUserId,
 };

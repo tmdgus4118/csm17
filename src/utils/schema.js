@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: moment().format("YYYY.MM.DD"),
   },
-  status: { type: String, require: true },
+  status: { type: Number, require: true },
 });
 
 const PostsSchema = new mongoose.Schema({
@@ -70,6 +70,9 @@ const DataRoomSchema = new mongoose.Schema({
 const PaymentsSchema = new mongoose.Schema({
   imp_uid: { type: String, require: true },
   merchant_uid: { type: String, require: true },
+  pay_method: { type: String, require: true },
+  amount: { type: Number, require: true },
+  buyer_tel: { type: String, require: true },
   register_time: {
     type: String,
     default: moment().format("YYYYMMDDhhmmss"),

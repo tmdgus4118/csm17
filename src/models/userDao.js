@@ -153,6 +153,36 @@ const postPayments = async (imp_uid, merchant_uid) => {
   }
 };
 
+const getUserInforByNickName = async (userNickName) => {
+  try {
+    console.log("------------NEST PAGE!!------------");
+    console.log("------------START------------");
+    const regex = (pattern) => new RegExp(`.*${pattern}.*`);
+    const titleRegex = regex(userNickName);
+    const AlluserStatus = await User.find({ nickname: { $regex: titleRegex } });
+    console.log(AlluserStatus);
+    console.log("------------AND------------");
+
+    const countAllUsers = await User.count({});
+
+    console.log("전체 가입중인 유저:", countAllUsers);
+    console.log("------------AND------------");
+
+    const exitUsers = await User.count({ status: 0 });
+    console.log("탈퇴한 유저 수:", exitUsers);
+
+    return { AlluserStatus, countAllUsers, exitUsers };
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const deleteByUserId = async (userId) => {
+  const deleteUser = await User.findByIdAndDelete(userId);
+  console.log("Delete to Success usernickname :", deleteUser.nickname);
+  return deleteUser;
+};
+
 module.exports = {
   Admin,
   getAdminById,
@@ -162,4 +192,6 @@ module.exports = {
   adminPosting,
   postPayments,
   Payments,
+  getUserInforByNickName,
+  deleteByUserId,
 };

@@ -55,6 +55,14 @@ const postPayments = async (imp_uid, merchant_uid) => {
   return adminpayments;
 };
 
+const getUserInforByNickName = async (userNickName) => {
+  return userDao.getUserInforByNickName(userNickName);
+};
+
+const deleteByUserId = async (userId) => {
+  return userDao.deleteByUserId(userId);
+};
+
 module.exports = {
   adminSignIn,
   adminSignUp,
@@ -62,4 +70,6 @@ module.exports = {
   getDashboard,
   adminPosting,
   postPayments,
+  getUserInforByNickName,
+  deleteByUserId,
 };

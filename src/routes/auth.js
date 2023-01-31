@@ -19,7 +19,19 @@ authrouter.post(
   adminController.adminPosting
 ); //게시물 등록
 
-authrouter.post("/admin/payments", adminController.postPayments);
+authrouter.post("/pay/complete", adminController.postPayments);
 //아임포트 결제 모듈 테스트
+
+authrouter.get(
+  "/admin/userstatus",
+  adminTokenRequired,
+  adminController.getUserInforByNickName
+);
+
+authrouter.delete(
+  "/admin/userstatus/:userId",
+  adminTokenRequired,
+  adminController.deleteByUserId
+);
 
 module.exports = authrouter;
