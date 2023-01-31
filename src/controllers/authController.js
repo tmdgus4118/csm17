@@ -147,6 +147,17 @@ const getUserInforByNickName = async (req, res) => {
   }
 };
 
+const patchUserStatusById = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const statusId = req.params.statusId;
+    const result = await authService.patchUserStatusById(userId, statusId);
+    return res.status(200).json(result);
+  } catch (err) {
+    res.status(err.statusCode || 400).json({ message: err.message });
+  }
+};
+
 const deleteByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -165,5 +176,6 @@ module.exports = {
   adminPosting,
   postPayments,
   getUserInforByNickName,
+  patchUserStatusById,
   deleteByUserId,
 };

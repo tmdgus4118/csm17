@@ -177,6 +177,15 @@ const getUserInforByNickName = async (userNickName) => {
   }
 };
 
+const patchUserStatusById = async (userId, statusId) => {
+  const changestatusId = await User.update(
+    { _id: userId },
+    { $set: { status: statusId } }
+  );
+  console.log("Success to Change user Status!!. UserId:", userId);
+  return changestatusId;
+};
+
 const deleteByUserId = async (userId) => {
   const deleteUser = await User.findByIdAndDelete(userId);
   console.log("Delete to Success usernickname :", deleteUser.nickname);
@@ -193,5 +202,6 @@ module.exports = {
   postPayments,
   Payments,
   getUserInforByNickName,
+  patchUserStatusById,
   deleteByUserId,
 };

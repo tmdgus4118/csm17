@@ -28,8 +28,14 @@ authrouter.get(
   adminController.getUserInforByNickName
 );
 
+authrouter.patch(
+  "/admin/userstatus/changestatus/:userId/:statusId",
+  adminTokenRequired,
+  adminController.patchUserStatusById
+);
+
 authrouter.delete(
-  "/admin/userstatus/:userId",
+  "/admin/userstatus/delete/:userId",
   adminTokenRequired,
   adminController.deleteByUserId
 );
