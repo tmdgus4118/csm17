@@ -19,17 +19,19 @@ const AdminSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
   email: { type: String, require: true },
   nickname: { type: String, require: true },
+  password: { type: String, require: true },
   register_date: {
     type: String,
     default: moment().format("YYYY.MM.DD"),
   },
-  status: { type: Number, require: true },
+  status: { type: Number },
 });
 
 const PostsSchema = new mongoose.Schema({
   title: { type: String, require: true },
   content: { type: String, require: true },
-  adminId: { type: Number, require: true },
+  adminId: { type: Number },
+  userId: { type: Number },
   register_date: {
     type: String,
     default: moment().format("YYYY.MM.DD"),
@@ -79,7 +81,15 @@ const PaymentsSchema = new mongoose.Schema({
   },
 });
 
+const JsonSchema = new mongoose.Schema({
+  name: { type: String },
+  start: { type: String },
+  desc: { type: String },
+  url: { type: String },
+});
+
 module.exports = {
+  JsonSchema,
   AdminSchema,
   UserSchema,
   PostsSchema,
