@@ -4,7 +4,7 @@ var moment = require("moment");
 const { useContainer } = require("typeorm");
 
 const AdminSchema = new mongoose.Schema({
-  adminId: { type: String, require: true, unique: true },
+  adminId: { type: String, require: true },
   password: { type: String, require: true },
   register_date: {
     type: String,
@@ -17,9 +17,9 @@ const AdminSchema = new mongoose.Schema({
 });
 
 const UserSchema = new mongoose.Schema({
-  email: { type: String, require: true },
-  nickname: { type: String, require: true },
-  password: { type: String, require: true },
+  email: { type: String },
+  nickname: { type: String },
+  password: { type: String },
   register_date: {
     type: String,
     default: moment().format("YYYY.MM.DD"),
@@ -81,19 +81,25 @@ const PaymentsSchema = new mongoose.Schema({
   },
 });
 
-const JsonSchema = new mongoose.Schema({
-  name: { type: String },
-  start: { type: String },
-  desc: { type: String },
-  url: { type: String },
-});
+const JsonSchema = new mongoose.Schema([
+  {
+    Num: String,
+    name: String,
+    start: String,
+    desc: String,
+    url: String,
+  },
+]);
+
+const npmSchema = new mongoose.Schema({});
 
 module.exports = {
-  JsonSchema,
   AdminSchema,
   UserSchema,
   PostsSchema,
   PdfSchema,
   DataRoomSchema,
   PaymentsSchema,
+  JsonSchema,
+  npmSchema,
 };
