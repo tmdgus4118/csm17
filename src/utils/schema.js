@@ -91,7 +91,80 @@ const JsonSchema = new mongoose.Schema([
   },
 ]);
 
-const npmSchema = new mongoose.Schema({});
+const testSchema = new mongoose.Schema([
+  {
+    Number1: String,
+    OrderData: String,
+    PayCard: String,
+    SaleSite: String,
+    MarketOrderNumber: String,
+    ProductName: String,
+    Option: String,
+    Quantity: String,
+    BuyerName: String,
+    PassNumber: String,
+    BuyerNumber: String,
+    Price: String,
+    DelieveryPrice: String,
+    TotalPrice: String,
+    CountryBuyPrice: String,
+    RealPrice: String,
+    Dollar: String,
+    Count: String,
+    RealCount: String,
+    Delivery: String,
+    DeliveryMethod: String,
+    RealWeight: String,
+    OpenMarketPee: String,
+    OpenMarketMoney: String,
+    PassMoney: String,
+    VolunterrMoney: String,
+    UsedMoneySum: String,
+    WorkingMoney: String,
+    GetMoney: String,
+    OpenMarketGetMoney: String,
+    Percentage: String,
+    Special: String,
+    Number: String,
+  },
+]);
+
+const SchoolSchema = new mongoose.Schema([
+  {
+    Number: { type: String, unique: true },
+    SchoolName: String,
+    SchoolLocation: { type: String, unique: true },
+    SchoolTestDuration: String,
+    FirstGradeExaminationRanking: String,
+    SecondGradeExaminationRanking: String,
+    ThirdGradeExaminationRanking: String,
+  },
+]);
+
+const ExamFileSchema = new mongoose.Schema([
+  {
+    Number: { type: String, unique: true },
+    FileName: { type: String, unique: true },
+    FileWriter: String,
+    FileCheker: String,
+    Type: String,
+    DownloadLink: String,
+    Created_At: {
+      type: String,
+      default: moment().format("YYYYMMDDhhmmss"),
+    },
+    Updated_At: {
+      type: String,
+      default: moment().format("YYYYMMDDhhmmss"),
+    },
+    RequestMessage: String,
+    RequestWriter: String,
+    RequestDate: {
+      type: String,
+      default: moment().format("YYYYMMDDhhmmss"),
+    },
+  },
+]);
 
 module.exports = {
   AdminSchema,
@@ -101,5 +174,7 @@ module.exports = {
   DataRoomSchema,
   PaymentsSchema,
   JsonSchema,
-  npmSchema,
+  testSchema,
+  SchoolSchema,
+  ExamFileSchema,
 };

@@ -11,7 +11,7 @@ const File = new mongoose.model("File", testSchema);
 const { useContainer, TreeRepository, Db } = require("typeorm");
 const { json } = require("body-parser");
 
-const all = async (req, res) => {
+const all2 = async (req, res) => {
   const client = new google.auth.JWT(
     keys.client_email,
 
@@ -36,7 +36,7 @@ const all = async (req, res) => {
     const sheets = google.sheets({ version: "v4", auth: client });
 
     const request = {
-      spreadsheetId: "1Q91DUw5Pm9qZEs-UUqhe2q5NKyPtcVUcKwW8KWCzrtI",
+      spreadsheetId: "1U96efSPRuGskzjXYL66A8XouXgKEi1qkQoHmSH7zYNE",
 
       range: "시트1",
 
@@ -50,16 +50,43 @@ const all = async (req, res) => {
     console.log(typeof response[1][2]);
     console.log(typeof response[1][3]);
     console.log(typeof response[1][4]);
-    console.log(response.length);
+
     const result = [];
-    for (let i = 1; i < response.length; i++) {
+    for (let i = 4; i <= response.length; i++) {
       try {
-        const jsonData = await Jsons.create({
-          Num: response[i][0],
-          name: response[i][1],
-          start: response[i][2],
-          desc: response[i][3],
-          url: response[i][4],
+        const jsonData = await File.create({
+          Number1: response[i][0],
+          OrderData: response[i][1],
+          PayCard: response[i][2],
+          SaleSite: response[i][3],
+          MarketOrderNumber: response[i][4],
+          ProductName: response[i][5],
+          Option: response[i][6],
+          Quantity: response[i][7],
+          BuyerName: response[i][8],
+          PassNumber: response[i][9],
+          BuyerNumber: response[i][10],
+          Price: response[i][11],
+          DelieveryPrice: response[i][12],
+          TotalPrice: response[i][13],
+          CountryBuyPrice: response[i][14],
+          RealPrice: response[i][15],
+          Dollar: response[i][16],
+          Count: response[i][17],
+          Delivery: response[i][18],
+          DeliveryMethod: response[i][19],
+          RealWeight: response[i][20],
+          OpenMarketPee: response[i][21],
+          OpenMarketMoney: response[i][22],
+          PassMoney: response[i][23],
+          VolunterrMoney: response[i][24],
+          UsedMoneySum: response[i][25],
+          WorkingMoney: response[i][26],
+          GetMoney: response[i][27],
+          OpenMarketGetMoney: response[i][28],
+          Percentage: response[i][29],
+          Special: response[i][30],
+          Number: response[i][31],
         });
         result.push(jsonData);
       } catch (e) {
@@ -73,4 +100,4 @@ const all = async (req, res) => {
   return res.status(201).json({ message: "Success to Insert Db" });
 };
 
-module.exports = all;
+module.exports = all2;
