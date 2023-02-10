@@ -4,4 +4,4 @@ sheetKey.json
 .env
 node_modules
 config
-logs
+/logs
