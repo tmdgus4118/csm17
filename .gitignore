@@ -1,7 +1,6 @@
-
+logs
 sheetKey.json
 .node_modules
 .env
 node_modules
 config
-/logs
