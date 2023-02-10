@@ -1,8 +1,13 @@
+const { json } = require("body-parser");
 const mongoose = require("mongoose");
 // require("mongoose-moment")(mongoose);
 moment = require("moment");
+const fetch = require("node-fetch");
+const { logger } = require("../../config/winston");
+const fs = require("fs");
 
-const { useContainer } = require("typeorm");
+const { useContainer, TreeRepository, Db } = require("typeorm");
+const { userTokenRequired, adminTokenRequired } = require("../utils/auth");
 const {
   AdminSchema,
   UserSchema,
@@ -10,6 +15,8 @@ const {
   PdfSchema,
   DataRoomSchema,
   PaymentsSchema,
+  SchoolSchema,
+  ExamFileSchema,
 } = require("../utils/schema");
 
 const User = new mongoose.model("Users", UserSchema);
@@ -18,11 +25,44 @@ const Post = new mongoose.model("Post", PostsSchema);
 const Pdfs = new mongoose.model("pdf", PdfSchema);
 const DataRoom = new mongoose.model("DataRoom", DataRoomSchema);
 const Payments = new mongoose.model("Payments", PaymentsSchema);
+const School = new mongoose.model("School", SchoolSchema);
+const Exam = new mongoose.model("Exam", ExamFileSchema);
 
 const getAdminById = async (adminId) => {
+  const { logger } = require("../../config/winston");
   try {
     const admins = await Admin.findOne({ adminId: adminId });
+    logger.info(`Admin Log In. AdminId:${adminId}`);
     return admins;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getUserById = async (userEmail) => {
+  const { logger } = require("../../config/winston");
+  try {
+    const users = await User.findOne({ email: userEmail });
+    logger.info(`User LogIn . UserEmail: ${userEmail}`);
+    return users;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getUserByIdd = async (id) => {
+  try {
+    const users = await User.findOne({ _id: id });
+    return users;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getUserByNickName = async (nickname) => {
+  try {
+    const users = await User.findOne({ nickname: nickname });
+    return users;
   } catch (err) {
     console.log(err);
   }
@@ -41,7 +81,24 @@ const createAdmin = async (adminId, password) => {
   }
 };
 
+const createUser = async (email, nickname, password) => {
+  try {
+    const users = await User.create({
+      email: email,
+      nickname: nickname,
+      password: password,
+      status: 1,
+    });
+    console.log("Success to Create User!!");
+    return users;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const getAllUser = async () => {
+  const { logger } = require("../../config/winston");
+  logger.info(`Admin See all Users List!`);
   try {
     const AllUsers = await User.find({});
     return AllUsers;
@@ -51,6 +108,8 @@ const getAllUser = async () => {
 };
 
 const getDashboard = async () => {
+  const { logger } = require("../../config/winston");
+  logger.info(`Admin Visit DashBoard!`);
   try {
     console.log(
       "_____________________________START___________________________________"
@@ -121,6 +180,8 @@ const getDashboard = async () => {
 };
 
 const adminPosting = async (title, content, adminId) => {
+  const { logger } = require("../../config/winston");
+
   try {
     const RandomViewNumber = Math.floor(Math.random() * 1000 + 1);
     const posts = await Post.create({
@@ -129,9 +190,29 @@ const adminPosting = async (title, content, adminId) => {
       adminId: adminId,
       view: RandomViewNumber,
     });
+    logger.info(`Admin Posting title:${posts.title}`);
     console.log("Success to Posting!!");
     const allposts = await Post.count({});
     console.log(allposts);
+    return posts;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const userPosting = async (title, content) => {
+  const { logger } = require("../../config/winston");
+  try {
+    const RandomViewNumber = Math.floor(Math.random() * 1000 + 1);
+    const writer = userTokenRequired._id;
+    const posts = await Post.create({
+      title: title,
+      content: content,
+      view: RandomViewNumber,
+      userId: writer,
+    });
+    logger.info(`User Posting title:${title}. And Content: ${content}`);
+    console.log("Success to Posting!!");
     return posts;
   } catch (err) {
     console.log(err);
@@ -154,12 +235,15 @@ const postPayments = async (imp_uid, merchant_uid) => {
 };
 
 const getUserInforByNickName = async (userNickName) => {
+  const { logger } = require("../../config/winston");
+
   try {
     console.log("------------NEST PAGE!!------------");
     console.log("------------START------------");
     const regex = (pattern) => new RegExp(`.*${pattern}.*`);
     const titleRegex = regex(userNickName);
     const AlluserStatus = await User.find({ nickname: { $regex: titleRegex } });
+    logger.info(`Admin get All users By Nick name and search${userNickName}`);
     console.log(AlluserStatus);
     console.log("------------AND------------");
 
@@ -178,30 +262,123 @@ const getUserInforByNickName = async (userNickName) => {
 };
 
 const patchUserStatusById = async (userId, statusId) => {
+  const { logger } = require("../../config/winston");
   const changestatusId = await User.update(
     { _id: userId },
     { $set: { status: statusId } }
   );
+  logger.info(`Admin Change Status ${userId} to ${statusId}`);
   console.log("Success to Change user Status!!. UserId:", userId);
   return changestatusId;
 };
 
 const deleteByUserId = async (userId) => {
+  const { logger } = require("../../config/winston");
   const deleteUser = await User.findByIdAndDelete(userId);
+  logger.info(`Admin Delete UserId : ${userId}`);
   console.log("Delete to Success usernickname :", deleteUser.nickname);
   return deleteUser;
 };
 
+const getExam = async (examType) => {
+  const { logger } = require("../../config/winston");
+  try {
+    console.log("-------------------검색 결과------------------");
+    const regex = (pattern) => new RegExp(`.*${pattern}.*`);
+    const titleRegex = regex(examType);
+
+    const AllExamFile = await Exam.find({ Type: { $regex: titleRegex } });
+    console.log(AllExamFile);
+    logger.info(`User Search "${examType}"`);
+    return AllExamFile;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// const getSearchLog = async (searchLog) => {
+//   const fs = require("fs");
+
+//   fs.readFile("../../logs/2023-02-07.txt", "utf8", (err, data) => {
+//     if (err) {
+//       console.error(err);
+//       return;
+//     }
+
+//     try {
+//       const count = data.match(/`${searchLog}`/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log(`${searchLog}:검색 횟수`, count);
+//     } catch (err) {
+//       console.log(`${searchLog}:검색 횟수:0`);
+//     }
+
+//     try {
+//       const count = data.match(/미분/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log("미분 검색횟수:", count);
+//     } catch (err) {
+//       console.log("미분 검색횟수:0");
+//     }
+//     try {
+//       const count1 = data.match(/적분/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log("적분 검색횟수:", count1);
+//     } catch (err) {
+//       console.log("적분 검색횟수:0");
+//     }
+//     try {
+//       const count2 = data.match(/통계/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log("통계 검색횟수:", count2);
+//     } catch (err) {
+//       console.log("통계 검색횟수:0");
+//     }
+//     try {
+//       const count3 = data.match(/2차/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log("2차방정식 검색횟수:", count3);
+//     } catch (err) {
+//       console.log("2차방정식 검색횟수:0");
+//     }
+//     try {
+//       const count4 = data.match(/3차/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log("3차방정식 검색횟수:", count4);
+//     } catch (err) {
+//       console.log("3차방정식 검색횟수:0");
+//     }
+//     try {
+//       const count5 = data.match(/확률/g).filter(function (item) {
+//         return item !== "";
+//       }).length;
+//       console.log("확률 검색횟수:", count5);
+//     } catch (err) {
+//       console.log("확률 검색횟수:0");
+//     }
+//   });
+// };
+
 module.exports = {
-  Admin,
   getAdminById,
+  getUserById,
+  getUserByNickName,
   createAdmin,
+  createUser,
   getAllUser,
   getDashboard,
   adminPosting,
+  userPosting,
   postPayments,
-  Payments,
   getUserInforByNickName,
   patchUserStatusById,
   deleteByUserId,
+  getUserByIdd,
+  getExam,
 };

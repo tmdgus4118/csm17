@@ -3,8 +3,15 @@ const mongoose = require("mongoose");
 const authService = require("../services/authService");
 const Payments = require("../models/userDao.js");
 const Imp_key = process.env.Imp_key;
+const { logger } = require("../../config/winston");
 const Imp_secret = process.env.Imp_secret;
 const axios = require("axios");
+const { google } = require("googleapis");
+
+const blogger = google.blogger({
+  version: "v3",
+  auth: "YOUR API KEY",
+});
 
 //관리자 로그인 기능//
 const adminSignIn = async (req, res) => {
@@ -14,8 +21,7 @@ const adminSignIn = async (req, res) => {
       throw new Error("Key Error!");
     }
     const adminAccessToken = await authService.adminSignIn(adminId, password);
-    console.log(Imp_key, Imp_secret);
-
+    // logger.info(`Admin Log In ! Admin Id : ${adminId}`);
     return res.status(201).json({ adminAccessToken: adminAccessToken });
   } catch (err) {
     res.status(err.statusCode || 400).json({ message: err.message });
@@ -143,7 +149,7 @@ const getUserInforByNickName = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (err) {
-    res.ststua(err.statusCode || 400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 };
 

@@ -166,6 +166,13 @@ const ExamFileSchema = new mongoose.Schema([
   },
 ]);
 
+const logSchema = new mongoose.Schema({
+  level: String,
+  message: String,
+  timestamp: String,
+  serverIp: String,
+});
+
 module.exports = {
   AdminSchema,
   UserSchema,
@@ -177,4 +184,5 @@ module.exports = {
   testSchema,
   SchoolSchema,
   ExamFileSchema,
+  logSchema,
 };

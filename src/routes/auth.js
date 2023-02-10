@@ -1,9 +1,16 @@
 const express = require("express");
 
 const adminController = require("../controllers/authController");
-
+const { logger } = require("../../config/winston");
 const { adminTokenRequired } = require("../utils/auth");
 const authrouter = express.Router();
+const {
+  getSearchLog,
+  userIpLog,
+  postTxtFile,
+  combineTxtFiles,
+  convertTxtFileToJson,
+} = require("../utils/count");
 
 authrouter.post("/admin/signin", adminController.adminSignIn); //관리자 로그인기능
 authrouter.post("/admin/signup", adminController.adminSignUp); //관리가 회원가입기능
@@ -40,4 +47,13 @@ authrouter.delete(
   adminController.deleteByUserId
 );
 
+authrouter.get("/admin/getlog", adminTokenRequired, getSearchLog);
+authrouter.get("/admin/getuserlog/:ipadress", adminTokenRequired, userIpLog);
+authrouter.post("/admin/copy-to-standard", adminTokenRequired, postTxtFile);
+authrouter.post(
+  "/admin/combine-text-files",
+  adminTokenRequired,
+  combineTxtFiles
+);
+authrouter.get("/admin/convert-txt", adminTokenRequired, convertTxtFileToJson);
 module.exports = authrouter;

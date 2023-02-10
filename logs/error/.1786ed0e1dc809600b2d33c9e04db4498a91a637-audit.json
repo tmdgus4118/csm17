@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "/Users/aaaaaa/Desktop/Back-end/sprint/logs/error/.1786ed0e1dc809600b2d33c9e04db4498a91a637-audit.json",
+    "files": [
+        {
+            "date": 1675861420500,
+            "name": "/Users/aaaaaa/Desktop/Back-end/sprint/logs/error/2023-02-08.error.log",
+            "hash": "4c45e994bee8c779d16dfaf8433ca126af34432712aebd18890a0a0467d8c5bd"
+        }
+    ],
+    "hashType": "sha256"
+}
