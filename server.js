@@ -10,7 +10,7 @@ const { logger } = require("./config/winston.js");
 const request = require("request");
 
 const mongoUrl = process.env.DBURL;
-
+const blockedIps = ["127.0.0.1"];
 const server = async () => {
   try {
     mongoose.set("strictQuery", false);
