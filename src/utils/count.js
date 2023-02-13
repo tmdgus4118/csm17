@@ -511,4 +511,5 @@ module.exports = {
   convertTxtFileToJson,
   countTimeData,
   countTopFive,
+  combineTxtFiles,
 };

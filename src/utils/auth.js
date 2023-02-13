@@ -57,7 +57,7 @@ const userTokenRequired = async (req, res, next) => {
       return next(error);
     }
 
-    logger.info(`User Log In ! User Id : ${userEmail}`);
+    logger.info(`User Id : ${userEmail}`);
     const user = await userDao.getUserById(userEmail);
 
     if (!user) {

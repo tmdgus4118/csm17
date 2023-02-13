@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^6.9.2",
     "@googleapis/docs": "^2.0.0",
     "ajax": "0.0.4",
     "app-root-path": "^3.1.0",
@@ -21,6 +22,7 @@
     "cheerio": "^1.0.0-rc.12",
     "cls-rtracer": "^2.6.2",
     "cors": "^2.8.5",
+    "cron": "^2.2.0",
     "csv-parse": "^4.4.6",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
@@ -44,6 +46,7 @@
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.20",
     "parse-json": "^6.0.2",
+    "pdf-text-extract": "^1.5.0",
     "request": "^2.88.2",
     "request-ip": "^3.3.0",
     "supertest": "^6.3.3",

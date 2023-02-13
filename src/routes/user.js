@@ -20,5 +20,6 @@ userRouter.post(
 );
 userRouter.post("/json", getFileInfor); //db에  몽구스 Json타입으로 저장하기 ㅎㅎ//
 userRouter.get("/user/search", userTokenRequired, userController.getExam);
+userRouter.post("/user/logout", userTokenRequired, userController.userLogOut);
 
 module.exports = userRouter;

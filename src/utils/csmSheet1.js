@@ -1,5 +1,7 @@
 const { google } = require("googleapis");
 
+const pdfTextExtract = require("pdf-text-extract");
+
 const mongoose = require("mongoose");
 const keys = require("../../sheetKey.json");
 const {

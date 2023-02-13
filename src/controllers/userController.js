@@ -1,9 +1,12 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const userService = require("../services/userService");
 const { google } = require("googleapis");
 const keys = require("../../sheetKey.json");
 var requestIp = require("request-ip");
+const { logger } = require("../../config/winston");
+require("dotenv").config();
 
 const userSignIn = async (req, res) => {
   try {
@@ -55,4 +58,27 @@ const getExam = async (req, res) => {
   }
 };
 
-module.exports = { userSignUp, userSignIn, userPosting, getExam };
+const userLogOut = async (req, res) => {
+  const token = req.headers.authorization;
+
+  try {
+    jwt.verify(token, process.env.JWT_SECRET1, (error, decoded) => {
+      if (error) {
+        return res.status(401).json({
+          message: "Invalid Token",
+        });
+      }
+      logger.info(`User Logout!`);
+      res.status(200).json({
+        message: "User logged out successfully",
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error while logging out",
+    });
+  }
+};
+
+module.exports = { userSignUp, userSignIn, userPosting, getExam, userLogOut };

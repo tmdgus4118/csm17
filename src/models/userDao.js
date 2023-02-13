@@ -32,7 +32,7 @@ const getAdminById = async (adminId) => {
   const { logger } = require("../../config/winston");
   try {
     const admins = await Admin.findOne({ adminId: adminId });
-    logger.info(`Admin Log In. AdminId:${adminId}`);
+    // logger.info(`Admin Log In. AdminId:${adminId}`);
     return admins;
   } catch (err) {
     console.log(err);
@@ -43,7 +43,7 @@ const getUserById = async (userEmail) => {
   const { logger } = require("../../config/winston");
   try {
     const users = await User.findOne({ email: userEmail });
-    logger.info(`User LogIn . UserEmail: ${userEmail}`);
+    // logger.info(`User LogIn . UserEmail: ${userEmail}`);
     return users;
   } catch (err) {
     console.log(err);
