@@ -194,13 +194,11 @@ const postTxtFile = async (req, res) => {
   const newlyCreatedFilePath = "/logs/";
 
   try {
-    // Read the contents of the newly created file
     const newlyCreatedFileContents = await fs.readFile(
       newlyCreatedFilePath,
       "utf8"
     );
 
-    // Append the contents to the standard file
     await fs.appendFile(standardFilePath, newlyCreatedFileContents, "utf8");
 
     res
@@ -214,35 +212,9 @@ const postTxtFile = async (req, res) => {
   }
 };
 
-// const combineTxtFiles = async (req, res) => {
-//   const fs = require("fs").promises;
-//   const folderPath = "/Users/aaaaaa/Desktop/Back-end/sprint/logs";
-//   const combinedFilePath =
-//     "/Users/aaaaaa/Desktop/Back-end/sprint/logs/Combined.txt";
-
-//   try {
-//     let combinedFileContents = "";
-
-//     const files = await fs.readdir(folderPath);
-
-//     for (const file of files) {
-//       if (file.endsWith(".txt")) {
-//         const filePath = `${folderPath}/${file}`;
-//         const fileContents = await fs.readFile(filePath, "utf8");
-//         combinedFileContents += fileContents + "\n";
-//       }
-//     }
-
-//     await fs.writeFile(combinedFilePath, combinedFileContents, "utf8");
-
-//     res.status(200).json({ message: "Files successfully combined." });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Failed to combine files." });
-//   }
-// };
-
 const combineTxtFiles = async (req, res) => {
+  const { logger } = require("../../config/winston");
+  logger.info(`Admin Combined TXT Log Files!`);
   const fs = require("fs").promises;
   const folderPath = "/Users/aaaaaa/Desktop/Back-end/sprint/logs";
   const combinedFilePath =
@@ -286,13 +258,10 @@ const convertTxtFileToJson = async (req, res) => {
         return res.status(500).send("Error reading text file");
       }
 
-      // Split the text file into lines
       const lines = data.split("\n");
 
-      // Define the keys for the JSON object
       const keys = lines[0].split(",");
 
-      // Convert the remaining lines into an array of objects
       const objects = [];
       for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(",");
@@ -318,10 +287,122 @@ const convertTxtFileToJson = async (req, res) => {
   );
 };
 
+const countTimeData = async (req, res) => {
+  const { logger } = require("../../config/winston");
+  logger.info(`Admin Count Time Data Log`);
+  const fs = require("fs");
+  fs.readFile(
+    "/Users/aaaaaa/Desktop/Back-end/sprint/logs/Combined.txt",
+    "utf-8",
+    (err, data) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      const lines = data.split("\n");
+      const countsPerDay = {};
+      const countsPerHour = new Array(24).fill(0);
+
+      lines.forEach((line) => {
+        if (!line) return;
+        const splitLine = line.split(" ");
+        if (splitLine.length < 2) return;
+
+        const date = splitLine[0];
+        const day = date.split(" ")[0];
+        if (!countsPerDay[day]) {
+          countsPerDay[day] = 1;
+        } else {
+          countsPerDay[day]++;
+        }
+
+        const hour = parseInt(splitLine[1].split(":")[0], 10);
+        countsPerHour[hour]++;
+      });
+
+      const countsPerHourStr = countsPerHour
+        .reduce((acc, count, index) => {
+          return acc.concat(`${index}:00~${index + 1}:00  : ${count} Datas, `);
+        }, "")
+        .slice(0, -2);
+
+      const countsPerDayStr = Object.keys(countsPerDay)
+        .reduce((acc, day) => {
+          return acc.concat(`${day}: ${countsPerDay[day]} Datas, `);
+        }, "")
+        .slice(0, -2);
+      const topFivePerHour = countsPerHour
+        .map((count, index) => {
+          return { hour: index, count };
+        })
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+      const topFivePerHourStr = topFivePerHour
+        .reduce((acc, { hour, count }) => {
+          return acc.concat(`${hour}:00~${hour + 1}:00  : ${count} Datas, `);
+        }, "")
+        .slice(0, -2);
+
+      res.json({
+        "시간별 트래픽 수": countsPerHourStr,
+        "날짜별 트래픽 수": countsPerDayStr,
+        "가장 트래픽이많은시간": topFivePerHourStr,
+      });
+    }
+  );
+};
+
+const countTopFive = async (req, res) => {
+  const fs = require("fs");
+  fs.readFile(
+    "/Users/aaaaaa/Desktop/Back-end/sprint/logs/Combined.txt",
+    "utf-8",
+    (err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send({ error: err.message });
+        return;
+      }
+
+      const lines = data.split("\n");
+      const counts = {};
+
+      lines.forEach((line) => {
+        const startIndex = line.indexOf("RequestIp:") + 10;
+        const endIndex = line.indexOf(",");
+        const ip = line.substring(startIndex, endIndex);
+        if (!counts[ip]) {
+          counts[ip] = 1;
+        } else {
+          counts[ip]++;
+        }
+      });
+
+      const sortedCounts = Object.keys(counts)
+        .sort((a, b) => counts[b] - counts[a])
+        .slice(0, 5);
+
+      const topFiveWithCounts = sortedCounts.map((ip) => ({
+        ip,
+        count: counts[ip],
+      }));
+
+      res.json({
+        "가장 많은 접속 IP": topFiveWithCounts,
+        "상위5IP 총 접속수 ": lines.length,
+      });
+    }
+  );
+};
+
 module.exports = {
   getSearchLog,
   userIpLog,
   postTxtFile,
   combineTxtFiles,
   convertTxtFileToJson,
+  countTimeData,
+  countTopFive,
 };

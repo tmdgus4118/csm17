@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { createApp } = require("./app");
+const getServerIp = require("./config/winston");
 var requestIp = require("request-ip");
 const mongoose = require("mongoose");
 const express = require("express");
@@ -20,6 +21,13 @@ const server = async () => {
     console.log("MongoDb Connected!!");
 
     app.use(express.json());
+
+    app.get("/", (req, res) => {
+      res.send("Welcome to the server");
+      const { logger } = require("./config/winston.js");
+      logger.info(`Client has successfully accessed!!      `);
+    });
+
     app.listen(PORT, () => {
       console.log(`Server Listening on port ${PORT}`);
       logger.info(`Server Listening on port ${PORT}`);

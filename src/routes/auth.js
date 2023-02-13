@@ -10,7 +10,10 @@ const {
   postTxtFile,
   combineTxtFiles,
   convertTxtFileToJson,
+  countTimeData,
+  countTopFive,
 } = require("../utils/count");
+const { auth } = require("google-auth-library");
 
 authrouter.post("/admin/signin", adminController.adminSignIn); //관리자 로그인기능
 authrouter.post("/admin/signup", adminController.adminSignUp); //관리가 회원가입기능
@@ -56,4 +59,6 @@ authrouter.post(
   combineTxtFiles
 );
 authrouter.get("/admin/convert-txt", adminTokenRequired, convertTxtFileToJson);
+authrouter.get("/admin/getdatatime", adminTokenRequired, countTimeData);
+authrouter.get("/admin/search/counttopfive", countTopFive);
 module.exports = authrouter;

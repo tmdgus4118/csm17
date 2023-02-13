@@ -11,6 +11,7 @@ const createApp = () => {
   app.use(cors());
   app.use(morgan("combined"));
   app.use(routes);
+
   return app;
 };
 
