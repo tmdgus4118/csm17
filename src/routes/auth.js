@@ -1,7 +1,7 @@
 const express = require("express");
 
 const adminController = require("../controllers/authController");
-const { logger } = require("../../config/winston");
+const { logger, uploadLogFile, cronJob12 } = require("../../config/winston");
 const { adminTokenRequired } = require("../utils/auth");
 const authrouter = express.Router();
 const {
@@ -61,4 +61,7 @@ authrouter.post(
 authrouter.get("/admin/convert-txt", adminTokenRequired, convertTxtFileToJson);
 authrouter.get("/admin/getdatatime", adminTokenRequired, countTimeData);
 authrouter.get("/admin/search/counttopfive", countTopFive);
+// authrouter.get("/admin/upload/autos", uploadLogs);
+authrouter.post("/admin/upload/google", adminTokenRequired, uploadLogFile);
+authrouter.post("/admin/upload/google/auto", adminTokenRequired, cronJob12);
 module.exports = authrouter;

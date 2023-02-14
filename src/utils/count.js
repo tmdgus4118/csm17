@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const { logger } = require("../../config/winston");
-const LogSchema = require("../utils/schema");
-const Logs = new mongoose.model("Logs", LogSchema);
 
 const getSearchLog = async (req, res) => {
   const { logger } = require("../../config/winston");

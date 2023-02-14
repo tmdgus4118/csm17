@@ -131,9 +131,9 @@ const testSchema = new mongoose.Schema([
 
 const SchoolSchema = new mongoose.Schema([
   {
-    Number: { type: String, unique: true },
+    Number: String,
     SchoolName: String,
-    SchoolLocation: { type: String, unique: true },
+    SchoolLocation: String,
     SchoolTestDuration: String,
     FirstGradeExaminationRanking: String,
     SecondGradeExaminationRanking: String,
@@ -143,8 +143,6 @@ const SchoolSchema = new mongoose.Schema([
 
 const ExamFileSchema = new mongoose.Schema([
   {
-    Number: { type: String, unique: true },
-    FileName: { type: String, unique: true },
     FileWriter: String,
     FileCheker: String,
     Type: String,
@@ -166,13 +164,27 @@ const ExamFileSchema = new mongoose.Schema([
   },
 ]);
 
-const logSchema = new mongoose.Schema({
-  level: String,
-  message: String,
-  timestamp: String,
-  serverIp: String,
+const DailyLogSchema = new mongoose.Schema({
+  text: {
+    type: String,
+    required: true,
+  },
 });
 
+const fileSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  download_url: {
+    type: String,
+    required: true,
+  },
+  uploaded_at: {
+    type: String,
+    default: moment().format("YYYYMMDDhhmmss"),
+  },
+});
 module.exports = {
   AdminSchema,
   UserSchema,
@@ -184,5 +196,6 @@ module.exports = {
   testSchema,
   SchoolSchema,
   ExamFileSchema,
-  logSchema,
+  DailyLogSchema,
+  fileSchema,
 };
