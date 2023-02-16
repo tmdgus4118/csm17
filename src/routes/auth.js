@@ -12,6 +12,7 @@ const {
   convertTxtFileToJson,
   countTimeData,
   countTopFive,
+  sendEmail,
 } = require("../utils/count");
 const { auth } = require("google-auth-library");
 
@@ -64,4 +65,5 @@ authrouter.get("/admin/search/counttopfive", countTopFive);
 // authrouter.get("/admin/upload/autos", uploadLogs);
 authrouter.post("/admin/upload/google", adminTokenRequired, uploadLogFile);
 authrouter.post("/admin/upload/google/auto", adminTokenRequired, cronJob12);
+authrouter.get("/send/email", sendEmail);
 module.exports = authrouter;

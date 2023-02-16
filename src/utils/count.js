@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const { logger } = require("../../config/winston");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
+const validateEmail = require("./validation");
 
 const getSearchLog = async (req, res) => {
   const { logger } = require("../../config/winston");
@@ -501,6 +504,47 @@ const countTopFive = async (req, res) => {
   );
 };
 
+const sendEmail = async (req, res) => {
+  const nodemailer = require("nodemailer");
+  // const email = req.body;
+  // validateEmail(email);
+
+  // Nodemailer configuration
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.UserEmail,
+      pass: process.env.UserPassword,
+    },
+  });
+  const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+  setTimeout(() => {
+    randomNumber = null;
+    console.log("Random number has been cleared");
+  }, 3 * 60 * 1000);
+
+  const mailOptions = {
+    from: process.env.UserEmail,
+    // from: "CSM17cor@gmail.com",
+    to: "tmdgus4118@naver.com",
+    subject: "CSM17 회원가입 인증 이메일",
+    text: `CSM17 회원가입 이메일 인증입니다.
+   인증 코드는: ${randomNumber}`,
+  };
+
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.send("Error: " + error);
+    } else {
+      console.log("Email sent: " + info.response);
+      res.send("Email sent: " + info.response);
+    }
+    logger.info(`Email send.Email:${mailOptions.to}Code:${randomNumber}`);
+  });
+};
+
 module.exports = {
   getSearchLog,
   userIpLog,
@@ -510,4 +554,5 @@ module.exports = {
   countTimeData,
   countTopFive,
   combineTxtFiles,
+  sendEmail,
 };

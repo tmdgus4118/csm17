@@ -7,6 +7,7 @@ const { logger } = require("../../config/winston");
 const Imp_secret = process.env.Imp_secret;
 const axios = require("axios");
 const { google } = require("googleapis");
+const nodemailer = require("nodemailer");
 
 const blogger = google.blogger({
   version: "v3",
